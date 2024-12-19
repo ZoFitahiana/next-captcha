@@ -9,17 +9,11 @@ const Sequence = ({ number }) => {
   useEffect(() => {
     const makeRequest = async (index) => {
       try {
-        const response = await fetch('https://api.prod.jcloudify.com/whoami', {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const data = await response.json();
-
-        if (data.type === '403 FORBIDDEN' && data.message === 'Bad credentials') {
+        const response = await fetch('https://api.prod.jcloudify.com/whoami');
+        if (response.status === 403) {
           setSequence((prev) => [...prev, `${index + 1}. Forbidden`]);
           setCurrentIndex(index + 1);
-        } else if (data.type === 'CAPTCHA_REQUIRED') {
+        } else if (response.status === 405) {
           setCaptchaRequired(true);
         }
       } catch (error) {
